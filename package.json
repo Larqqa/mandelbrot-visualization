@@ -1,0 +1,30 @@
+{
+  "name": "mandlebrot",
+  "version": "1.0.0",
+  "description": "mandlebrot visualization",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --mode development --open",
+    "build": "webpack --mode production ",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
+  },
+  "author": "Larqqa",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.12.17",
+    "@babel/preset-env": "^7.12.17",
+    "babel-loader": "^8.2.2",
+    "babel-preset-env": "^1.7.0",
+    "css-loader": "^5.0.2",
+    "eslint": "^7.20.0",
+    "html-loader": "^2.0.0",
+    "html-webpack-plugin": "^5.2.0",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^11.0.1",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.23.0",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}
