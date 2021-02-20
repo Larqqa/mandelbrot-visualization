@@ -1,31 +1,38 @@
-function getById(id) {
-  return document.getElementById(id);
-}
-
-async function fetchWasm() {
-  const req = await fetch('main.wasm');
-  const res = await req.arrayBuffer();
-  const results = await WebAssembly.instantiate(res);
-
-  return results.instance.exports;
-}
+import { getById, fetchWasm } from './util';
 
 const cv = getById('canvas');
 const ctx = cv.getContext('2d');
 
-async function renderWasm(foo, bar) {
-  const wasm = await fetchWasm();
-
-  ctx.fillText(wasm.add(foo, bar), 10, 10);
-  ctx.fillText(wasm.substract(foo, bar), 10, 20);
-  ctx.fillText(wasm.multiply(foo, bar), 10, 30);
-  ctx.fillText(wasm.divide(foo, bar), 10, 40);
-  ctx.fillText(wasm.fib(10), 10, 50);
-}
-// renderWasm(7,7);
-
-function main () {
-  console.log('hello');
+function fib(n){
+  if (n === 0 || n === 1) return 1;
+  return fib(n - 1) + fib(n - 2);
 }
 
+async function main() {
+
+  // ctx.fillText(5 + 5, 10, 10);
+  // ctx.fillText(5 - 5, 10, 20);
+  // ctx.fillText(5 / 5, 10, 30);
+  // ctx.fillText(5 * 5, 10, 40);
+
+  ctx.fillText(fib(30), 10, 10);
+}
+
+console.time();
 main();
+console.timeEnd();
+
+async function mainWasm() {
+  const wasm = await fetchWasm('./wasm/mandelbrot_bg.wasm');
+
+  // ctx.fillText(wasm.add(5, 5), 10, 60);
+  // ctx.fillText(wasm.substract(5, 5), 10, 70);
+  // ctx.fillText(wasm.divide(5, 5), 10, 80);
+  // ctx.fillText(wasm.multiply(5, 5), 10, 90);
+
+  ctx.fillText(wasm.fib(30), 10, 20);
+}
+
+console.time();
+mainWasm();
+console.timeEnd();

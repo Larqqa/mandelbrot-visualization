@@ -1,9 +1,14 @@
 const path = require('path');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
-  entry: path.resolve(__dirname, "src", "index.js"),
+  entry: [
+    '@babel/polyfill',
+    path.resolve(__dirname, 'src', 'index.js')
+  ],
   output: {
     path: path.join(__dirname, './dist'),
     filename: '[name].min.js',
@@ -26,7 +31,7 @@ module.exports = {
     rules: [
       {
         test: /\.html$/,
-        loader: "html-loader"
+        loader: 'html-loader'
       },
       {
         test: /\.js$/,
@@ -41,17 +46,33 @@ module.exports = {
       {
         test: /\.(css|scss)$/,
         use: [
-          "style-loader",
-          "css-loader",
-          "sass-loader"
+          'style-loader',
+          'css-loader',
+          'sass-loader'
         ]
       },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "src", "index.html"),
+      template: path.resolve(__dirname, 'src', 'index.html'),
       inject: true
     }),
+    new WasmPackPlugin({
+      crateDirectory: path.resolve(__dirname, 'wasm'),
+      outDir: path.resolve(__dirname, 'src/wasm'),
+      outName: 'mandelbrot'
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          context: path.join(__dirname, 'src/wasm/'),
+          from: '*.wasm',
+          to: path.join(__dirname, 'dist/wasm') },
+      ]
+    })
   ],
+  experiments: {
+    syncWebAssembly: true
+  }
 };
