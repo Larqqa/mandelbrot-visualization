@@ -63,14 +63,14 @@ module.exports = {
       outDir: path.resolve(__dirname, 'src/wasm'),
       outName: 'mandelbrot'
     }),
-    new CopyPlugin({
-      patterns: [
-        {
-          context: path.join(__dirname, 'src/wasm/'),
-          from: '*.wasm',
-          to: path.join(__dirname, 'dist/wasm') },
-      ]
-    })
+    // new CopyPlugin({
+    //   patterns: [
+    //     {
+    //       context: path.join(__dirname, 'src/wasm/'),
+    //       from: '*.wasm',
+    //       to: path.join(__dirname, 'dist/wasm') },
+    //   ]
+    // })
   ],
   experiments: {
     syncWebAssembly: true
