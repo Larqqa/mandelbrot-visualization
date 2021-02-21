@@ -10,7 +10,8 @@
     "build:wasm": "rm -rf ./src/wasm && cd wasm && wasm-pack build --target web --out-dir ../src/wasm && cd ..",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "serve": "npx http-server dist"
+    "serve": "npx http-server dist",
+    "serve:build": "npm run build && npx http-server dist"
   },
   "author": "Larqqa",
   "license": "MIT",
