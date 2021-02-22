@@ -38,65 +38,41 @@ export function mapValue(value, in_min, in_max, out_min, out_max) {
 * c² + c = (a² - b² + 2abi) + a + bi
 *
 */
-export function generateMandelbrot(width, height, offsetX, offsetY, minRange, maxRange, iterations) {
-  let x, y, a, b, termOne, termTwo, oldA, oldB, n, alpha;
-  const pixels = new Float32Array(width * height);
+export function generateMandelbrot(buffer, width, height, offsetX, offsetY, range, iterations, widthRatio, heightRatio, paramA = false, paramB = false) {
+  let pos, x, y, a, b, termOne, oldA, oldB, n;
+
+  const offX = (offsetX) / range;
+  const offY = offsetY / range;
+
+  const xRange = range * widthRatio;
+  const yRange = range * heightRatio;
 
   for (x = 0; x < width; x++) {
+    oldA = mapValue(x - offX, 0, width, -xRange, xRange);
     for (y = 0; y < height; y++) {
-      a = mapValue(x - offsetX, 0, width, -minRange, maxRange);
-      b = mapValue(y - offsetY, 0, height, -minRange, maxRange);
-
-      oldA = a;
+      a = oldA;
+      b = mapValue(y - offY, 0, height, -yRange, yRange);
       oldB = b;
 
       n = 0;
       while (n < iterations) {
-        termOne = a * a - b * b;
-        termTwo = 2 * (a * b);
+        termOne = a * a - b * b + (paramA ? paramA : oldA);
+        b = 2 * (a * b) + (paramB ? paramB : oldB);
+        a = termOne;
 
-        a = termOne + oldA;
-        b = termTwo + oldB;
-
-        if (a * a + b * b > 16) break;
+        if (a * a + b * b > 4) break;
 
         n++;
       }
 
-      // Map iteration amount to a color value between 0 and 255
-      // alpha = n === iterations ? 0 : mapValue(Math.sqrt(mapValue(n, 0, iterations, 0, 1)), 0, 1, 0, 255);
-      alpha = n === iterations ? 0 : mapValue(n, 0, iterations, 0, 255);
-      pixels[y * width + x] = alpha;
+      n = n === iterations ? 0 : mapValue(n, 0, iterations, 0, 765);
+      pos = (y * width + x) * 4;
+      buffer[pos + 0] = n > 255 ? 255 : n;
+      buffer[pos + 1] = n > 255 ? n - 255 : 0;
+      buffer[pos + 2] = n > 510 ? n - 510 : 0;
+      buffer[pos + 3] = mapValue(n, 0, 765, 255, 0);
     }
   }
 
-  return pixels;
-}
-
-/**
- * Same, but no XY loop
- */
-export function findMandelbrot(x, y, offsetX, offsetY, width, height, minRange, maxRange, iterations) {
-  let a = mapValue(x - offsetX, 0, width, -minRange, maxRange);
-  let b = mapValue(y - offsetY, 0, height, -minRange, maxRange);
-
-  let oldA = a;
-  let oldB = b;
-
-  let termOne, termTwo;
-
-  let n = 0;
-  while (n < iterations) {
-    termOne = a * a - b * b;
-    termTwo = 2 * (a * b);
-
-    a = termOne + oldA;
-    b = termTwo + oldB;
-
-    if (a * a + b * b > 16) break;
-
-    n++;
-  }
-
-  return n === iterations ? 0 : mapValue(n, 0, iterations, 0, 255);
+  return buffer;
 }

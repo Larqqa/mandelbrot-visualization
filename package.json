@@ -4,7 +4,7 @@
   "description": "mandlebrot visualization",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --mode development --open",
+    "start": "webpack serve --mode development",
     "build": "rm -rf dist && webpack --mode production",
     "build:dev": "rm -rf dist && webpack --mode development",
     "build:wasm": "rm -rf ./src/wasm && cd wasm && wasm-pack build --target web --out-dir ../src/wasm && cd ..",

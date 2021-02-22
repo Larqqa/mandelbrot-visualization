@@ -1,4 +1,54 @@
 html, body {
-  padding: 0;
   margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+#ui-wrapper {
+  position: fixed;
+  flex-wrap: wrap;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  display: flex;
+  z-index: 1000;
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+
+  &.active {
+    display: flex;
+  }
+
+  p {
+    padding: 0;
+    margin: .2rem;
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+}
+
+#hamburger {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+@media screen and (max-width: 1200px) {
+  #hamburger {
+    display: block;
+  }
+
+  #ui-wrapper {
+    display: none;
+  }
 }

@@ -8,15 +8,28 @@
 </head>
 <body>
   <canvas id="rCanvas"></canvas>
-  <div class="ui">
+  <button id="hamburger">X</button>
+  <div id="ui-wrapper">
     <p id="fps">FPS: <span></span></p>
-    <p id="calc">Calc: <span></span></p>
-    <p id="x">X: <span></span></p>
-    <p id="y">Y: <span></span></p>
-    <p id="min">Minrange: <span></span></p>
-    <p id="max">Maxrange: <span></span></p>
-    <p id="iter">Iterations: <span></span></p>
+    <p id="calc">Calculation time: <span></span></p>
+    <p id="render">Render time: <span></span></p>
+    <br>
+    <small>Keyboard controls on the right:</small>
+    <form id="ui">
+      <label for="x">X: A & D</label>
+      <input type="text" id="x" name="x" value="0">
+      <label for="y">Y: W & S</label>
+      <input type="text" id="y" name="y" value="0">
+      <label for="scale">Scale: Z & X</label>
+      <input type="text" id="scale" name="scale" value="0">
+      <label for="iter">Iterations: E & R</label>
+      <input type="text" id="iter" name="iter" value="0">
+      <label for="zVal">Z value: C & V</label>
+      <input type="text" id="zVal" name="zVal" value="0">
+      <label for="cVal">C value: B & N</label>
+      <input type="text" id="cVal" name="cVal" value="0">
+      <button type="submit">Calculate</button>
+    </form>
   </div>
-  <button id="toggler">Toggle calulator</button>
 </body>
 </html>

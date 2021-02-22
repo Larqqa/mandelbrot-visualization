@@ -10,11 +10,11 @@ module.exports = {
     path.resolve(__dirname, 'src', 'index.js')
   ],
   output: {
-    path: path.join(__dirname, './dist'),
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].min.js',
   },
   devServer: {
-    contentBase: path.join(__dirname, './src'),
+    contentBase: path.resolve(__dirname, 'src'),
     inline: true,
     hot: true,
     watchContentBase: true,
@@ -66,11 +66,11 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          context: path.join(__dirname, 'src/wasm/'),
+          context: path.resolve(__dirname, 'src/wasm/'),
           from: '*.wasm',
-          to: path.join(__dirname, 'dist/wasm') },
+          to: path.resolve(__dirname, 'dist/wasm') },
       ]
-    })
+    }),
   ],
   experiments: {
     syncWebAssembly: true

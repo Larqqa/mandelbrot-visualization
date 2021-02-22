@@ -1,87 +1,180 @@
 import './main.scss';
-import { getById, fetchWasm, findMandelbrot } from './util';
+import { getById, fetchWasm, generateMandelbrot } from './util';
+// const wasm = import('./wasm/mandelbrot');
 
-async function main() {
-  const wasm = await fetchWasm('./wasm/mandelbrot_bg.wasm');
+// Setup canvas size
+let width = window.innerWidth;
+let height = window.innerHeight;
+let widthRatio = width / height;
+let heightRatio = height / width;
 
-  const size = 400;
-  const cv = getById('rCanvas');
-  const ctx = cv.getContext('2d');
-  cv.width = size;
-  cv.height = size;
+// Get and initialize the canvas
+const cv = getById('rCanvas');
+const ctx = cv.getContext('2d');
+cv.width = width;
+cv.height = height;
+let buffer = new Uint8ClampedArray(width * height * 4);
+let idata = ctx.createImageData(width, height);
 
-  let xOff = 0;
-  let yOff = 0;
-  let minRange = 2;
-  let maxRange = 2;
-  let iter = 100;
+// Update canvas when resizing the window
+window.addEventListener('resize', () => {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  widthRatio = width / height;
+  heightRatio = height / width;
+  cv.width = width;
+  cv.height = height;
+  buffer = new Uint8ClampedArray(width * height * 4);
+  idata = ctx.createImageData(width, height);
+});
 
-  let wasmMath = true;
+// Get UI elements
+const uiWrapper = getById('ui-wrapper');
+const hamburger = getById('hamburger');
 
-  document.addEventListener('keypress', (e) => {
-    if (e.code === 'KeyD') xOff -= 10;
-    if (e.code === 'KeyA') xOff += 10;
+const xUi = getById('x');
+const yUi = getById('y');
+const scaleUi = getById('scale');
+const iterUi = getById('iter');
+const zUi = getById('zVal');
+const cUi = getById('cVal');
 
-    if (e.code === 'KeyW') yOff -= 10;
-    if (e.code === 'KeyS') yOff += 10;
+// Initial fractal values
+let xOff = 0;
+let yOff = 0;
+let scale = 3;
+let iter = 100;
+let z = -0.7269;
+let c = 0.1889;
 
-    if (e.code === 'KeyZ') minRange *= .9;
-    if (e.code === 'KeyX') minRange *= 1.1;
-    if (e.code === 'KeyC') maxRange *= .9;
-    if (e.code === 'KeyV') maxRange *= 1.1;
-
-    if (e.code === 'KeyE') iter += 1;
-    if (e.code === 'KeyR') iter -= 1;
-  });
-
-  const button = getById('toggler');
-  button.addEventListener('click', () => wasmMath = !wasmMath);
-
-  const fpsUi = getById('fps').querySelector('span');
-  const calcUi = getById('calc').querySelector('span');
-  const xUi = getById('x').querySelector('span');
-  const yUi = getById('y').querySelector('span');
-  const minUi = getById('min').querySelector('span');
-  const maxUi = getById('max').querySelector('span');
-  const iterUi = getById('iter').querySelector('span');
+xUi.value = xOff;
+yUi.value = yOff;
+scaleUi.value = scale;
+iterUi.value = iter;
+zUi.value = z;
+cUi.value = c;
 
 
-  let n = 0;
+let bufferImage;
+let calcTime = 0;
+let renderTime = 0;
 
-  let lastCalled = performance.now();
-  let fps = 0;
-  let delta = 0;
+async function renderImage() {
+  calcTime = performance.now();
+  // For wasm
+  // const was = await wasm;
+  // bufferImage = await was.generate_mandelbrot(buffer, width, height, xOff, yOff, scale, iter, 1, heightRatio, z, c);
+  bufferImage = generateMandelbrot(buffer, width, height, xOff, yOff, scale, iter, 1, heightRatio, z, c);
+  calcTime = (performance.now() - calcTime);
 
-  setInterval(() => {
-    fpsUi.innerHTML = fps;
-    calcUi.innerHTML = wasmMath === true ? 'wasm' : 'js';
-    xUi.innerHTML = xOff;
-    yUi.innerHTML = yOff;
-    minUi.innerHTML = minRange;
-    maxUi.innerHTML = maxRange;
-    iterUi.innerHTML = iter;
-
-    if (wasmMath) {
-      for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-          n = wasm.find_mandelbrot(x, y, xOff, yOff, size, size, minRange, maxRange, iter);
-          ctx.fillStyle = `rgba(${n}, ${n}, ${n}, ${255})`;
-          ctx.fillRect(x, y, 1, 1);
-        }
-      }
-    } else {
-      for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-          n = findMandelbrot(x, y, xOff, yOff, size, size, minRange, maxRange, iter);
-          ctx.fillStyle = `rgba(${n}, ${n}, ${n}, ${255})`;
-          ctx.fillRect(x, y, 1, 1);
-        }
-      }
-    }
-
-    delta = (performance.now() - lastCalled) / 1000;
-    lastCalled = performance.now();
-    fps = Math.floor(1 / delta);
-  }, 10);
+  renderTime = performance.now();
+  idata.data.set(bufferImage);
+  ctx.putImageData(idata, 0, 0);
+  renderTime = (performance.now() - renderTime);
 }
-main();
+
+// Setup performance
+const fpsUi = getById('fps').querySelector('span');
+const calcUi = getById('calc').querySelector('span');
+const renderUi = getById('render').querySelector('span');
+
+let lastCalled = performance.now();
+let fps = 0;
+let delta = 0;
+
+// The render loop
+function render() {
+  fpsUi.innerHTML = fps;
+  calcUi.innerHTML = Math.floor(calcTime);
+  renderUi.innerHTML = Math.floor(renderTime);
+
+  delta = (performance.now() - lastCalled) / 1000;
+  lastCalled = performance.now();
+  fps = Math.floor(1 / delta);
+
+  renderImage();
+
+  window.requestAnimationFrame(render);
+}
+render();
+
+// Map keys to effects
+document.addEventListener('keypress', (e) => {
+  if (e.code === 'KeyD') {
+    xOff -= 10 * scale;
+    xUi.value = xOff;
+  } else if (e.code === 'KeyA') {
+    xOff += 10 * scale;
+    xUi.value = xOff;
+  }
+
+  if (e.code === 'KeyW') {
+    yOff -= 10 * scale;
+    yUi.value = yOff;
+  } else if (e.code === 'KeyS') {
+    yOff += 10 * scale;
+    yUi.value = yOff;
+  }
+
+  if (e.code === 'KeyZ') {
+    scale *= .9;
+    scaleUi.value = scale;
+  } else if (e.code === 'KeyX') {
+    scale *= 1.1;
+    scaleUi.value = scale;
+  }
+
+  if (e.code === 'KeyE') {
+    iter += 1;
+    iterUi.value = iter;
+  } else if (e.code === 'KeyR') {
+    iter -= 1;
+    iterUi.value = iter;
+  }
+
+  if (e.code === 'KeyC') {
+    z *= .999;
+    zUi.value = z;
+  } else if (e.code === 'KeyV') {
+    z *= 1.001;
+    zUi.value = z;
+  }
+
+  if (e.code === 'KeyB') {
+    c *= .999;
+    cUi.value = c;
+  } else if (e.code === 'KeyN') {
+    c *= 1.001;
+    cUi.value = c;
+  }
+});
+
+// Map ui to effects
+getById('ui').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  xOff = parseFloat(e.target.x.value);
+  xUi.value = xOff;
+
+  yOff = parseFloat(e.target.y.value);
+  yUi.value = yOff;
+
+  scale = parseFloat(e.target.scale.value);
+  scaleUi.value = scale;
+
+  iter = parseFloat(e.target.iter.value);
+  iterUi.value = iter;
+
+  z = parseFloat(e.target.zVal.value);
+  zUi.value = z;
+
+  c = parseFloat(e.target.cVal.value);
+  cUi.value = c;
+
+  console.log(e.target.iter.value, e.target.zVal.value, e.target.cVal.value);
+});
+
+hamburger.addEventListener('click', () => {
+  console.log('yeee');
+  uiWrapper.classList.toggle('active');
+});
