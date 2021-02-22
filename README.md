@@ -1,6 +1,8 @@
 # Mandelbrot set visualization with JS and WASM
 ### Comparing the speed of JS and WASM for faster calculations
 
+[Demo website](https://larqqa.github.io/mandelbrot-visualization/)
+
 To start the workflow, use `npm start`.
 This starts the WebPack dev server, which compiles the rust files in `wasm/src` and JavaScript files in `src`
 

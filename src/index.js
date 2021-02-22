@@ -44,8 +44,8 @@ let xOff = 0;
 let yOff = 0;
 let scale = 3;
 let iter = 100;
-let z = -0.7269;
-let c = 0.1889;
+let z = 0;
+let c = 0;
 
 xUi.value = xOff;
 yUi.value = yOff;
