@@ -1,10 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
   entry: [
     '@babel/polyfill',
     path.resolve(__dirname, 'src', 'index.js')
@@ -14,11 +15,12 @@ module.exports = {
     filename: '[name].min.js',
   },
   devServer: {
+    // quiet: true,
     contentBase: path.resolve(__dirname, 'src'),
-    inline: true,
-    hot: true,
     watchContentBase: true,
-    compress: true,
+    // inline: true,
+    // hot: true,
+    // compress: true,
     port: 3000,
 
     // Show client errors in browser
@@ -58,21 +60,15 @@ module.exports = {
       template: path.resolve(__dirname, 'src', 'index.html'),
       inject: true
     }),
-    new WasmPackPlugin({
-      crateDirectory: path.resolve(__dirname, 'wasm'),
-      outDir: path.resolve(__dirname, 'src/wasm'),
-      outName: 'mandelbrot'
-    }),
-    new CopyPlugin({
-      patterns: [
-        {
-          context: path.resolve(__dirname, 'src/wasm/'),
-          from: '*.wasm',
-          to: path.resolve(__dirname, 'dist/wasm') },
-      ]
-    }),
-  ],
-  experiments: {
-    syncWebAssembly: true
-  }
+    // new FriendlyErrorsWebpackPlugin(),
+    new ErrorOverlayPlugin()
+    // new CopyPlugin({
+    //   patterns: [
+    //     {
+    //       context: path.resolve(__dirname, 'src/wasm/'),
+    //       from: '*.wasm',
+    //       to: path.resolve(__dirname, 'dist/wasm') },
+    //   ]
+    // }),
+  ]
 };

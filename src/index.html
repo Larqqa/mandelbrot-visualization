@@ -1,41 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mandelbrot</title>
-</head>
-<body>
-  <main>
-    <canvas id="rCanvas"></canvas>
-    <button id="hamburger">X</button>
-    <div id="ui-wrapper">
-      <p id="fps">FPS: <span></span></p>
-      <p id="calc">Calculation time: <span></span></p>
-      <p id="render">Render time: <span></span></p>
-      <br>
-      <small>Keyboard controls on the right:</small>
-      <form id="ui">
-        <label for="x">X offset: A & D</label>
-        <input type="text" id="x" name="x" value="0">
-        <label for="y">Y offset: W & S</label>
-        <input type="text" id="y" name="y" value="0">
-        <label for="scale">Scale: Z & X</label>
-        <input type="text" id="scale" name="scale" value="0">
-        <label for="iter">Iterations: E & R</label>
-        <input type="text" id="iter" name="iter" value="0">
-        <label for="zVal">A value: C & V</label>
-        <input type="text" id="zVal" name="zVal" value="0">
-        <label for="cVal">Bi value: B & N</label>
-        <input type="text" id="cVal" name="cVal" value="0">
-        <button type="submit">Calculate</button>
-      </form>
-    </div>
-  </main>
-
-  <footer>
-    <small>Made with ☕ & ❤️ | Larqqa ©️ 2021 | <a href="https://github.com/Larqqa/mandelbrot-visualization" target="_blank" rel="noopener noreferrer">Github Repo</a></small>
-  </footer>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandelbrot</title>
+  </head>
+  <body>
+    <main>
+      <canvas id="webglCanvas"></canvas>
+    </main>
+    <footer>
+      <small>Made with ☕ & ❤️ | Larqqa ©️ 2021 | <a href="https://github.com/Larqqa/mandelbrot-visualization" target="_blank" rel="noopener noreferrer">Github Repo</a></small>
+    </footer>
+  </body>
 </html>
