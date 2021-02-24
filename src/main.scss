@@ -1,12 +1,17 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100vh;
+  // height: 100vh;
+  overscroll-behavior: none;
 }
 
 main {
   display: flex;
   justify-content: center;
+}
+
+canvas {
+  position: fixed;
 }
 
 #ui-wrapper {
@@ -33,7 +38,23 @@ main {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
+
+    label {
+      margin-bottom: .2rem;
+    }
+
+    input {
+      margin-bottom: .5rem;
+    }
+
+    button {
+      margin-top: 1rem;
+    }
   }
+}
+
+.mobile-ui {
+  display: none;
 }
 
 footer {
@@ -48,6 +69,13 @@ footer {
   position: fixed;
   top: 0;
   right: 0;
+  z-index: 1000;
+
+  &:before { content:'\2630'; }
+
+  &.active {
+    &:before { content:'✕'; }
+  }
 }
 
 @media screen and (max-width: 1200px) {
@@ -56,6 +84,22 @@ footer {
   }
 
   #ui-wrapper {
+    position: absolute;
+    display: none;
+    z-index: 1;
+
+    width: 100%;
+  }
+
+  .desktop-ui {
     display: none;
   }
+
+  .mobile-ui {
+    display: block;
+  }
+}
+
+.hide {
+  display: none !important;
 }

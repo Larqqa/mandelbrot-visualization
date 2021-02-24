@@ -1,17 +1,22 @@
 export class Engine {
-  constructor(canvas, program) {
+  constructor(canvas, program, shader) {
+    this.shader = shader;
     this.running = false;
     this.canvas = canvas;
     this.program = program;
   }
 
   update() {
-    this.program.rotation += .01;
+    // this.shader.upIterations();
+    // this.program.reloadShaders();
+    this.ui.updatePerf();
   }
 
   render() {
+    this.renderPerf = performance.now();
     this.canvas.clear();
     this.program.drawScene();
+    this.renderPerf = Math.floor((performance.now() - this.renderPerf) * 100) / 100;
   }
 
   start() {
@@ -29,8 +34,8 @@ export class Engine {
 
     let frameTime = 0.0;
     let frames = 0;
-    let fps = 0;
-    let missedFrameCount = 0;
+    this.fps = 0;
+    this.missedFrameCount = 0;
 
     const animationLoop = () => {
       shouldRender = false;
@@ -53,11 +58,11 @@ export class Engine {
         // Update FPS counter
         if (frameTime >= 1.0) {
           frameTime = 0;
-          fps = frames;
+          this.fps = frames;
           frames = 0;
-          missedFrameCount = frameTarget - fps;
+          this.missedFrameCount = frameTarget - this.fps;
 
-          console.log(`FPS: ${fps} Missed frames: ${missedFrameCount}`);
+          console.log(`FPS: ${this.fps}  Missed frames: ${this.missedFrameCount}   Render time: ${this.renderPerf} ms`);
         }
       }
 

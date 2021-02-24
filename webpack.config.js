@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
+const favicons = require('favicons-webpack-plugin');
 
 module.exports = {
   devtool: 'cheap-module-source-map',
@@ -22,6 +23,7 @@ module.exports = {
     // hot: true,
     // compress: true,
     port: 3000,
+    host: '0.0.0.0',
 
     // Show client errors in browser
     overlay: {
@@ -60,15 +62,20 @@ module.exports = {
       template: path.resolve(__dirname, 'src', 'index.html'),
       inject: true
     }),
-    // new FriendlyErrorsWebpackPlugin(),
-    new ErrorOverlayPlugin()
-    // new CopyPlugin({
-    //   patterns: [
-    //     {
-    //       context: path.resolve(__dirname, 'src/wasm/'),
-    //       from: '*.wasm',
-    //       to: path.resolve(__dirname, 'dist/wasm') },
-    //   ]
-    // }),
+    new FriendlyErrorsWebpackPlugin(),
+    new ErrorOverlayPlugin(),
+    new favicons({
+      logo: './favicon.png',
+      favicons: {
+        appName: 'Fractal viewer',
+        appDescription: 'Application for interacting with the Mandelbrot and Julia sets',
+        background: '#000',
+        theme_color: '#000',
+        icons: {
+          coast: false,
+          yandex: false
+        }
+      }
+    }),
   ]
 };

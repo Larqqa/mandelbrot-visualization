@@ -1,8 +1,12 @@
 export class Canvas {
   constructor(canvas, width, height) {
     this.canvas = canvas;
+    this.width = width;
+    this.height = height;
     this.canvas.width = width;
     this.canvas.height = height;
+    this.xCenter = width / 2;
+    this.yCenter = height / 2;
 
     this.gl = this.canvas.getContext("webgl");
     if (this.gl === null) {
@@ -11,15 +15,18 @@ export class Canvas {
     }
 
     this.clear();
-
-    window.addEventListener('resize', () => {
-      this.resize(window.innerWidth, window.innerHeight);
-    });
   }
 
   resize(width, height) {
     this.canvas.width = width;
     this.canvas.height = height;
+    this.width = width;
+    this.height = height;
+    this.xCenter = width / 2;
+    this.yCenter = height / 2;
+    this.gl.viewport(0, 0, width, height);
+
+    this.clear();
   }
 
   clear() {

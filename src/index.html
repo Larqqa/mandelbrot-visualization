@@ -1,16 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mandelbrot</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta description="Interactively navigate the Mandelbrot and Julia sets">
+    <title>Fractal Viewer</title>
   </head>
   <body>
     <main>
       <canvas id="webglCanvas"></canvas>
+      <button id="hamburger"></button>
+      <div style="color: white; position: fixed; top: 0;">
+        <p id="doubletouch"></p>
+        <p id="doubletouchx"></p>
+        <p id="doubletouchy"></p>
+      </div>
+
+      <div id="ui-wrapper">
+        <p id="fps">FPS:           <span></span></p>
+        <p id="missed">Missed frames: <span></span></p>
+        <p id="render">Render time:   <span></span></p>
+        <br>
+        <form id="ui-form">
+          <label for="x">x:</label>
+          <input id="x" name="x" autocomplete="off">
+          <label for="y">y:</label>
+          <input id="y" name="y" autocomplete="off">
+          <label for="scale">Scale:</label>
+          <input id="scale" name="scale" autocomplete="off">
+          <label for="iterations">Iterations:</label>
+          <input id="iterations" name="iterations" autocomplete="off">
+          <br>
+          <label for="julia">Toggle Julia set:
+            <input id="julia" name="julia" type="checkbox">
+          </label>
+          <label for="a">a:</label>
+          <input id="a" name="a" autocomplete="off">
+          <label for="b">b:</label>
+          <input id="b" name="b" autocomplete="off">
+          <br>
+          <button type="submit">Calculate</button>
+        </form>
+        <br>
+        <div class="desktop-ui">
+          <p><b>Keyboard controls:</b></p>
+          <p>WASD to move</p>
+          <p>Q & E to adjust scale</p>
+          <p>Z & X to adjust iterations</p>
+          <p>C to toggle the Julia set</p>
+          <p>R & T to adjust 'a' value</p>
+          <p>F & G to adjust 'bi' value</p>
+          <p>V to hide the UI</p>
+        </div>
+        <div class="mobile-ui">
+          <p>Use single touch to move</p>
+          <p>Use pinch to adjust scale</p>
+        </div>
+      </div>
     </main>
-    <footer>
+    <footer id="footer">
       <small>Made with ☕ & ❤️ | Larqqa ©️ 2021 | <a href="https://github.com/Larqqa/mandelbrot-visualization" target="_blank" rel="noopener noreferrer">Github Repo</a></small>
     </footer>
   </body>
