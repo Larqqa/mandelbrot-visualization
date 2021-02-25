@@ -11,7 +11,7 @@
     "lint:fix": "eslint src --fix",
     "serve": "npx http-server dist",
     "serve:build": "npm run build && npx http-server dist",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "author": "Larqqa",
   "license": "MIT",

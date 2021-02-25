@@ -82,7 +82,7 @@ export class Controls {
   touchControls() {
     const move = (e) => {
       if (this.click && e.touches.length === 1) {
-        document.getElementById('doubletouch').innerHTML = Math.floor(e.touches[0].clientX);
+        // document.getElementById('doubletouch').innerHTML = Math.floor(e.touches[0].clientX);
 
         const x = e.touches[0].clientX - this.canvas.xCenter;
         const y = e.touches[0].clientY - this.canvas.yCenter;
@@ -111,8 +111,15 @@ export class Controls {
         this.xOffset = xCenter * this.program.scale;
         this.yOffset = yCenter * this.program.scale;
 
-        this.program.xOffset += this.xOffset * this.zoomMoveModifier / this.mobileOffset;
-        this.program.yOffset -= this.yOffset * this.zoomMoveModifier / this.mobileOffset;
+        this.xOffset = this.xOffset * this.zoomMoveModifier / this.mobileOffset;
+        this.yOffset = this.yOffset * this.zoomMoveModifier / this.mobileOffset;
+
+        this.program.xOffset += this.xOffset;
+        this.program.yOffset -= this.yOffset;
+
+        // document.getElementById('doubletouch').innerHTML = this.oldYOff - this.yOffset;
+        // document.getElementById('doubletouchx').innerHTML = this.program.xOffset;
+        // document.getElementById('doubletouchy').innerHTML = this.xOffset;
 
         this.d = calcDistance(x, y, x2, y2);
 
@@ -123,7 +130,6 @@ export class Controls {
         this.change = Math.floor(this.initialD - this.d);
         this.initialD = this.d;
 
-        document.getElementById('doubletouchy').innerHTML = this.change;
 
         if (this.change < -1) {
           this.program.scale *= 1 - (this.zoomModifier / this.mobileOffset);
@@ -134,22 +140,26 @@ export class Controls {
     };
 
     window.addEventListener('touchstart', (e) => {
-      this.click = true;
+      if (e.target === this.canvas.canvas) {
+        this.click = true;
 
-      this.mouseX = e.touches[0].clientX - this.canvas.xCenter;
-      this.mouseY = e.touches[0].clientY - this.canvas.yCenter;
+        this.mouseX = e.touches[0].clientX - this.canvas.xCenter;
+        this.mouseY = e.touches[0].clientY - this.canvas.yCenter;
 
-      window.addEventListener('touchmove', move, false);
-      window.addEventListener('touchmove', zoom, false);
+        window.addEventListener('touchmove', move, false);
+        window.addEventListener('touchmove', zoom, false);
+      }
     });
 
-    window.addEventListener('touchend', () => {
-      this.click = false;
+    window.addEventListener('touchend', (e) => {
+      if (e.target === this.canvas.canvas) {
+        this.click = false;
 
-      window.removeEventListener('touchmove', move);
-      window.removeEventListener('touchmove', zoom);
+        window.removeEventListener('touchmove', move);
+        window.removeEventListener('touchmove', zoom);
 
-      this.ui.updateUI();
+        this.ui.updateUI();
+      }
     });
   }
 

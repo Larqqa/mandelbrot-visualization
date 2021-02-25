@@ -65,6 +65,8 @@ export class UI {
   calculateUI(e) {
     e.preventDefault();
 
+    console.log(e.target.iterations.value);
+
     this.program.xOffset = parseFloat(e.target.x.value);
     this.program.yOffset = parseFloat(e.target.y.value);
 
