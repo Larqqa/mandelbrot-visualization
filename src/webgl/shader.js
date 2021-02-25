@@ -5,14 +5,15 @@ export class Shader {
     this.canvas = canvas;
     this.gl = canvas.gl;
     this.iterations = 100;
-    this.oscillation = true;
 
     this.vsSource = vsSource;
     this.vertexShader = this.loadShader(this.gl.VERTEX_SHADER, this.vsSource);
 
-    // To control the value of iterations, we have to hard code the constant replacement
-    // to the shader.
-    // Also cause JS, janky int to float conversion.
+    /**
+     * To control the value of iterations,
+     * we have to hard code the constant replacement to the shader.
+     * Also because JS, janky int to float conversion.
+     */
     this.fsSource = fsSource.replace('[ITERATIONS]', this.iterations + '.0');
     this.fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, this.fsSource);
 
@@ -20,7 +21,7 @@ export class Shader {
   }
 
   updateIterations() {
-    // Here we reload and rebuild the shader program, with the updated iteration amount.
+    // Reload fragment shader with new iteration amount.
     this.fsSource = fsSource.replace('[ITERATIONS]', Math.floor(this.iterations) + '.0');
     this.fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, this.fsSource);
     this.shaderProgram = this.buildShaderProgram();

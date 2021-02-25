@@ -3,6 +3,8 @@ html, body {
   padding: 0;
   // height: 100vh;
   overscroll-behavior: none;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgba(0,0,0,0.5);
 }
 
 main {
@@ -14,13 +16,17 @@ canvas {
   position: fixed;
 }
 
+.hide {
+  display: none !important;
+}
+
 #ui-wrapper {
+  display: flex;
   position: fixed;
   flex-wrap: wrap;
   flex-direction: column;
   top: 0;
   left: 0;
-  display: flex;
   z-index: 1000;
   background-color: rgba(0,0,0,0.5);
   color: white;
@@ -29,7 +35,7 @@ canvas {
     display: flex;
   }
 
-  p {
+  small, p {
     padding: 0;
     margin: .2rem;
   }
@@ -51,6 +57,11 @@ canvas {
       margin-top: 1rem;
     }
   }
+}
+
+#julia-wrap {
+  display: flex;
+  flex-direction: column;
 }
 
 .mobile-ui {
@@ -87,7 +98,6 @@ footer {
     position: absolute;
     display: none;
     z-index: 1;
-
     width: 100%;
   }
 
@@ -98,8 +108,4 @@ footer {
   .mobile-ui {
     display: block;
   }
-}
-
-.hide {
-  display: none !important;
 }

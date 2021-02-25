@@ -1,19 +1,14 @@
 export class Canvas {
   constructor(canvas, width, height) {
     this.canvas = canvas;
-    this.width = width;
-    this.height = height;
-    this.canvas.width = width;
-    this.canvas.height = height;
-    this.xCenter = width / 2;
-    this.yCenter = height / 2;
-
     this.gl = this.canvas.getContext("webgl");
     if (this.gl === null) {
       console.error("Unable to initialize WebGL. Your browser or machine may not support it.");
       return;
     }
 
+    // Init canvas
+    this.resize(width, height);
     this.clear();
   }
 

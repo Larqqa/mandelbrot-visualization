@@ -1,3 +1,5 @@
+import { calcDistance, mapValue } from '../utils.js';
+
 export class Controls {
   constructor(canvas, shader, program, ui) {
     this.canvas = canvas;
@@ -10,23 +12,24 @@ export class Controls {
     this.zoomMoveModifier = .15;
     this.iterationModifier = 1;
     this.juliaOffset = .005 / Math.PI;
+    this.mobileOffset = 2.5;
 
     this.resizeCanvas();
-    this.moveCanvas();
-    this.mouseZoom();
-    this.mouseMove();
-    this.touchMove();
-    this.touchZoom();
+    this.keyboardControls();
+    this.mouseControls();
+    this.touchControls();
   }
 
   resizeCanvas() {
     window.addEventListener('resize', () => {
       this.canvas.resize(window.innerWidth, window.innerHeight);
-      this.program.buffers = this.program.initBuffers();
+      this.program.buffer = this.program.initBuffer();
     });
   }
 
-  mouseZoom() {
+  mouseControls() {
+
+    // ZOOM
     window.addEventListener('wheel', (e) => {
       if (e.deltaY < 0) {
         this.program.scale *= 1 - this.zoomModifier;
@@ -42,56 +45,8 @@ export class Controls {
 
       this.ui.updateUI();
     });
-  }
 
-  touchZoom() {
-    const calcTouchZoom = (e) => {
-      console.log(e.touches.length);
-
-      if (this.click && e.touches.length === 2) {
-        const x1 = e.touches[0].clientX;
-        const y1 = e.touches[0].clientY;
-
-        const x2 = e.touches[1].clientX;
-        const y2 = e.touches[1].clientY;
-
-        const a = Math.floor(x2 - x1);
-        const b = Math.floor(y2 - y1);
-
-        const d = Math.sqrt(a*a + b*b);
-        const change = Math.floor(this.d - d);
-        this.d = d;
-
-        if (change < -5 || change > 5) {
-          if (change < 0) {
-            this.program.scale *= 1 - this.zoomModifier;
-          } else {
-            this.program.scale *= 1 + this.zoomModifier;
-          }
-
-          this.xOffset = (this.canvas.xCenter - ((x1 + x2) / 2)) * this.program.scale;
-          this.yOffset = (this.canvas.yCenter - ((y1 + y2) / 2)) * this.program.scale;
-          this.program.xOffset += this.xOffset * this.zoomMoveModifier;
-          this.program.yOffset -= this.yOffset * this.zoomMoveModifier;
-        }
-
-        this.ui.updateUI();
-      }
-    };
-
-    this.canvas.canvas.addEventListener('touchstart', (e) => {
-      this.click = true;
-      this.touches = e.touches;
-      window.addEventListener('touchmove', calcTouchZoom);
-    });
-
-    this.canvas.canvas.addEventListener('touchend', () => {
-      this.click = false;
-      window.removeEventListener('touchmove', calcTouchZoom);
-    });
-  }
-
-  mouseMove() {
+    // MOVE
     const calcMouseMove = (e) => {
       if (this.click) {
         this.xOffset = (this.mouseX - e.clientX);
@@ -109,9 +64,12 @@ export class Controls {
 
     this.canvas.canvas.addEventListener('mousedown', (e) => {
       e.preventDefault();
+      e.target.focus();
+
       this.click = true;
       this.mouseX = e.clientX;
       this.mouseY = e.clientY;
+
       window.addEventListener('mousemove', calcMouseMove);
     });
 
@@ -121,9 +79,11 @@ export class Controls {
     });
   }
 
-  touchMove() {
-    const calcTouchMove = (e) => {
-      if (this.click && this.touches.length === 1) {
+  touchControls() {
+    const move = (e) => {
+      if (this.click && e.touches.length === 1) {
+        document.getElementById('doubletouch').innerHTML = Math.floor(e.touches[0].clientX);
+
         const x = e.touches[0].clientX - this.canvas.xCenter;
         const y = e.touches[0].clientY - this.canvas.yCenter;
 
@@ -135,26 +95,66 @@ export class Controls {
 
         this.program.xOffset -= this.xOffset  * this.program.scale;
         this.program.yOffset += this.yOffset  * this.program.scale;
-
-        this.ui.updateUI();
       }
     };
 
-    this.canvas.canvas.addEventListener('touchstart', (e) => {
+    const zoom = (e) => {
+      if (this.click && e.touches.length === 2) {
+        const x = e.touches[0].clientX;
+        const y = e.touches[0].clientY;
+        const x2 = e.touches[1].clientX;
+        const y2 = e.touches[1].clientY;
+
+        const xCenter = this.canvas.xCenter - ((x2 + x) / 2);
+        const yCenter = this.canvas.yCenter - ((y2 + y) / 2);
+
+        this.xOffset = xCenter * this.program.scale;
+        this.yOffset = yCenter * this.program.scale;
+
+        this.program.xOffset += this.xOffset * this.zoomMoveModifier / this.mobileOffset;
+        this.program.yOffset -= this.yOffset * this.zoomMoveModifier / this.mobileOffset;
+
+        this.d = calcDistance(x, y, x2, y2);
+
+        if (!this.initialD) {
+          this.initialD = this.d;
+        }
+
+        this.change = Math.floor(this.initialD - this.d);
+        this.initialD = this.d;
+
+        document.getElementById('doubletouchy').innerHTML = this.change;
+
+        if (this.change < -1) {
+          this.program.scale *= 1 - (this.zoomModifier / this.mobileOffset);
+        } else if (this.change > 1) {
+          this.program.scale *= 1 + (this.zoomModifier / this.mobileOffset);
+        }
+      }
+    };
+
+    window.addEventListener('touchstart', (e) => {
       this.click = true;
+
       this.mouseX = e.touches[0].clientX - this.canvas.xCenter;
       this.mouseY = e.touches[0].clientY - this.canvas.yCenter;
-      window.addEventListener('touchmove', calcTouchMove);
+
+      window.addEventListener('touchmove', move, false);
+      window.addEventListener('touchmove', zoom, false);
     });
 
-    this.canvas.canvas.addEventListener('touchend', () => {
+    window.addEventListener('touchend', () => {
       this.click = false;
-      window.removeEventListener('touchmove', calcTouchMove);
+
+      window.removeEventListener('touchmove', move);
+      window.removeEventListener('touchmove', zoom);
+
+      this.ui.updateUI();
     });
   }
 
-  moveCanvas() {
-    window.addEventListener('keydown', (e) => {
+  keyboardControls() {
+    const keys = (e) => {
       this.offset = this.movementModifier * this.program.scale;
 
       if (e.code === 'KeyD') {
@@ -188,6 +188,7 @@ export class Controls {
 
       if (e.code === 'KeyC') {
         this.program.isJulia = !this.program.isJulia;
+        this.ui.juliaWrap.classList.toggle('hide');
       }
 
       if (e.code === 'KeyR') {
@@ -224,7 +225,9 @@ export class Controls {
       ) {
         this.ui.updateUI();
       }
+    };
 
-    });
+    this.canvas.canvas.addEventListener('keydown', keys);
+    this.canvas.canvas.removeEventListener('keyup', keys);
   }
 }

@@ -7,8 +7,6 @@ export class Engine {
   }
 
   update() {
-    // this.shader.upIterations();
-    // this.program.reloadShaders();
     this.ui.updatePerf();
   }
 
@@ -39,16 +37,12 @@ export class Engine {
 
     const animationLoop = () => {
       shouldRender = false;
-
-      // Set timers
       firstTime = window.performance.now() / 1000.0;
       passedTime = firstTime - lastTime;
       lastTime = firstTime;
       unprocessedTime += passedTime;
       frameTime += passedTime;
 
-      // If the engine skips frames, update state untill caught up
-      // Otherwise run ~once per frame
       while (unprocessedTime >= updateCap) {
         unprocessedTime -= updateCap;
         shouldRender = true;
@@ -77,11 +71,14 @@ export class Engine {
 
       if (this.running === true) {
         window.requestAnimationFrame(animationLoop);
-      } else {
-        console.error('Engine stopped');
       }
     }
 
     window.requestAnimationFrame(animationLoop);
+  }
+
+  stop() {
+    this.running = false;
+    console.error('Engine stopped');
   }
 }

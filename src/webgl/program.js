@@ -3,6 +3,9 @@ export class Program {
     this.canvas = canvas;
     this.gl = canvas.gl;
 
+    this.shader = shader;
+    this.shaderProgram = shader.shaderProgram;
+
     this.xOffset = 0;
     this.yOffset = 0;
     this.scale = 2;
@@ -11,10 +14,7 @@ export class Program {
     this.bOffset = 0;
     this.isJulia = false;
 
-    this.shader = shader;
-    this.shaderProgram = shader.shaderProgram;
-
-    this.buffers = this.initBuffers();
+    this.buffer = this.initBuffer();
     this.programInfo = this.generateProgramInfo();
   }
 
@@ -31,21 +31,20 @@ export class Program {
         vertexColor:    this.gl.getAttribLocation(this.shaderProgram, 'aVertexColor'),
       },
       uniformLocations: {
-        viewPort: this.gl.getUniformLocation(this.shaderProgram, 'uViewPort'),
-        xOffset:  this.gl.getUniformLocation(this.shaderProgram, 'uXOff'),
-        yOffset:  this.gl.getUniformLocation(this.shaderProgram, 'uYOff'),
-        scale:    this.gl.getUniformLocation(this.shaderProgram, 'uScale'),
-        isJulia:  this.gl.getUniformLocation(this.shaderProgram, 'uIsJulia'),
-        aOffset:  this.gl.getUniformLocation(this.shaderProgram, 'uA'),
-        bOffset:  this.gl.getUniformLocation(this.shaderProgram, 'uB'),
+        viewPort:  this.gl.getUniformLocation(this.shaderProgram, 'uViewPort'),
+        posOffset: this.gl.getUniformLocation(this.shaderProgram, 'uPosOff'),
+        scale:     this.gl.getUniformLocation(this.shaderProgram, 'uScale'),
+        isJulia:   this.gl.getUniformLocation(this.shaderProgram, 'uIsJulia'),
+        abOffset:  this.gl.getUniformLocation(this.shaderProgram, 'uABOff'),
       },
     };
   }
 
-  initBuffers() {
+  initBuffer() {
     const positionBuffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
 
+    // Setup a rect to the viewports corners
     this.gl.bufferData(
       this.gl.ARRAY_BUFFER,
       new Float32Array([
@@ -61,24 +60,32 @@ export class Program {
   }
 
   drawScene() {
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffers);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
 
-    this.gl.vertexAttribPointer(this.programInfo.attribLocations.vertexPosition, 2, this.gl.FLOAT, false, 0, 0);
-    this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexPosition);
+    this.gl.vertexAttribPointer(
+      this.programInfo.attribLocations.vertexPosition,
+      2, this.gl.FLOAT, false, 0, 0);
+
+    this.gl.enableVertexAttribArray(
+      this.programInfo.attribLocations.vertexPosition);
 
     this.gl.useProgram(this.programInfo.program);
 
-    this.gl.uniform2fv(this.programInfo.uniformLocations.viewPort, [ this.canvas.width, this.canvas.height ]);
+    this.gl.uniform2fv(
+      this.programInfo.uniformLocations.viewPort,
+      [ this.canvas.width, this.canvas.height ]);
 
-    this.gl.uniform1f(this.programInfo.uniformLocations.xOffset, this.xOffset);
-    this.gl.uniform1f(this.programInfo.uniformLocations.yOffset, this.yOffset);
+    this.gl.uniform2fv(
+      this.programInfo.uniformLocations.posOffset,
+      [ this.xOffset, this.yOffset ]);
+
+    this.gl.uniform2fv(
+      this.programInfo.uniformLocations.abOffset,
+      [ this.aOffset, this.bOffset ]);
+
     this.gl.uniform1f(this.programInfo.uniformLocations.scale, this.scale);
-
     this.gl.uniform1f(this.programInfo.uniformLocations.isJulia, this.isJulia);
-    this.gl.uniform1f(this.programInfo.uniformLocations.aOffset, this.aOffset);
-    this.gl.uniform1f(this.programInfo.uniformLocations.bOffset, this.bOffset);
-    // this.gl.enable(this.gl.BLEND);
-    // this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+
     this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
   }
 }

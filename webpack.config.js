@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 const favicons = require('favicons-webpack-plugin');
@@ -8,7 +7,7 @@ const favicons = require('favicons-webpack-plugin');
 module.exports = {
   devtool: 'cheap-module-source-map',
   entry: [
-    '@babel/polyfill',
+    // '@babel/polyfill',
     path.resolve(__dirname, 'src', 'index.js')
   ],
   output: {
@@ -16,20 +15,15 @@ module.exports = {
     filename: '[name].min.js',
   },
   devServer: {
+    // clientLogLevel: 'none',
     // quiet: true,
-    contentBase: path.resolve(__dirname, 'src'),
-    watchContentBase: true,
-    // inline: true,
-    // hot: true,
-    // compress: true,
+    // contentBase: path.resolve(__dirname, 'src'),
+    // watchContentBase: true,
+    inline: true,
+    hot: true,
     port: 3000,
     host: '0.0.0.0',
-
-    // Show client errors in browser
-    overlay: {
-      warnings: true,
-      errors: true
-    }
+    overlay: true,
   },
   module: {
     rules: [
@@ -60,7 +54,6 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src', 'index.html'),
-      inject: true
     }),
     new FriendlyErrorsWebpackPlugin(),
     new ErrorOverlayPlugin(),

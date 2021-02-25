@@ -10,7 +10,7 @@
   </head>
   <body>
     <main>
-      <canvas id="webglCanvas"></canvas>
+      <canvas id="webglCanvas" tabindex="-1"></canvas>
       <button id="hamburger"></button>
       <div style="color: white; position: fixed; top: 0;">
         <p id="doubletouch"></p>
@@ -19,9 +19,9 @@
       </div>
 
       <div id="ui-wrapper">
-        <p id="fps">FPS:           <span></span></p>
-        <p id="missed">Missed frames: <span></span></p>
-        <p id="render">Render time:   <span></span></p>
+        <small id="fps">FPS:<span></span></small>
+        <small id="missed">Missed frames:<span></span></small>
+        <small id="render">Render time:<span></span></small>
         <br>
         <form id="ui-form">
           <label for="x">x:</label>
@@ -36,15 +36,17 @@
           <label for="julia">Toggle Julia set:
             <input id="julia" name="julia" type="checkbox">
           </label>
-          <label for="a">a:</label>
-          <input id="a" name="a" autocomplete="off">
-          <label for="b">b:</label>
-          <input id="b" name="b" autocomplete="off">
+          <div id="julia-wrap" class="hide">
+            <label for="a">a:</label>
+            <input id="a" name="a" autocomplete="off">
+            <label for="b">bi:</label>
+            <input id="b" name="b" autocomplete="off">
+          </div>
           <br>
           <button type="submit">Calculate</button>
         </form>
         <br>
-        <div class="desktop-ui">
+        <div class="desktop-ui ui">
           <p><b>Keyboard controls:</b></p>
           <p>WASD to move</p>
           <p>Q & E to adjust scale</p>
@@ -54,7 +56,7 @@
           <p>F & G to adjust 'bi' value</p>
           <p>V to hide the UI</p>
         </div>
-        <div class="mobile-ui">
+        <div class="mobile-ui ui">
           <p>Use single touch to move</p>
           <p>Use pinch to adjust scale</p>
         </div>
