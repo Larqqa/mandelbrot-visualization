@@ -1,9 +1,9 @@
 export class Canvas {
   constructor(canvas, width, height) {
     this.canvas = canvas;
-    this.gl = this.canvas.getContext("webgl");
+    this.gl = this.canvas.getContext('webgl');
     if (this.gl === null) {
-      console.error("Unable to initialize WebGL. Your browser or machine may not support it.");
+      console.error('Unable to initialize WebGL. Your browser or machine may not support it.');
       return;
     }
 

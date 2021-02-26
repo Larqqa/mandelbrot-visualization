@@ -21,7 +21,6 @@ export class Shader {
   }
 
   updateIterations() {
-    // Reload fragment shader with new iteration amount.
     this.fsSource = fsSource.replace('[ITERATIONS]', Math.floor(this.iterations) + '.0');
     this.fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, this.fsSource);
     this.shaderProgram = this.buildShaderProgram();

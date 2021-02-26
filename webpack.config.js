@@ -7,7 +7,6 @@ const favicons = require('favicons-webpack-plugin');
 module.exports = {
   devtool: 'cheap-module-source-map',
   entry: [
-    // '@babel/polyfill',
     path.resolve(__dirname, 'src', 'index.js')
   ],
   output: {
@@ -15,10 +14,6 @@ module.exports = {
     filename: '[name].min.js',
   },
   devServer: {
-    // clientLogLevel: 'none',
-    // quiet: true,
-    // contentBase: path.resolve(__dirname, 'src'),
-    // watchContentBase: true,
     inline: true,
     hot: true,
     port: 3000,
@@ -53,12 +48,12 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src', 'index.html'),
+      template: path.resolve(__dirname, 'public', 'index.html'),
     }),
     new FriendlyErrorsWebpackPlugin(),
     new ErrorOverlayPlugin(),
     new favicons({
-      logo: './favicon.png',
+      logo: path.resolve(__dirname, 'public', 'favicon.png'),
       favicons: {
         appName: 'Fractal viewer',
         appDescription: 'Application for interacting with the Mandelbrot and Julia sets',

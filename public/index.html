@@ -7,22 +7,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta description="Interactively navigate the Mandelbrot and Julia sets">
     <title>Fractal Viewer</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        overscroll-behavior: none;
+        background-color: black;
+      }
+    </style>
   </head>
   <body>
     <main>
       <canvas id="webglCanvas" tabindex="-1"></canvas>
       <button id="hamburger"></button>
-      <div style="color: white; position: fixed; top: 0;">
-        <p id="doubletouch"></p>
-        <p id="doubletouchx"></p>
-        <p id="doubletouchy"></p>
-      </div>
 
       <div id="ui-wrapper">
         <small id="fps">FPS: <span></span></small>
         <small id="missed">Missed frames: <span></span></small>
         <small id="render">Render time: <span></span></small>
         <br>
+
         <form id="ui-form">
           <label for="x">x:</label>
           <input id="x" name="x" autocomplete="off">
@@ -33,6 +37,7 @@
           <label for="iterations">Iterations:</label>
           <input id="iterations" name="iterations" autocomplete="off">
           <br>
+
           <label for="julia">Toggle Julia set:
             <input id="julia" name="julia" type="checkbox">
           </label>
@@ -43,9 +48,33 @@
             <input id="b" name="b" autocomplete="off">
           </div>
           <br>
+
+          <label for="hRange">H:
+            <input id="toggleH" type="checkbox">
+          </label>
+          <input id="hRange" type="range" min="0.0" max="1.0" step="0.01" name="hRange" value="1.0" disabled>
+          <label for="sRange">S:
+            <input id="toggleS" type="checkbox">
+          </label>
+          <input id="sRange" type="range" min="0.0" max="1.0" step="0.01" name="sRange" value="1.0" disabled>
+          <label for="vRange">V:
+            <input id="toggleV" type="checkbox">
+          </label>
+          <input id="vRange" type="range" min="0.0" max="1.0" step="0.01" name="vRange" value="0.0" disabled>
+          <label for="smoothing">Smoothing:
+            <input id="smoothing" name="smoothing" type="checkbox">
+          </label><label for="blackandwhite">Black and White:
+            <input id="blackandwhite" name="blackandwhite" type="checkbox">
+          </label>
+          </label><label for="invert">Invert:
+            <input id="invert" name="invert" type="checkbox">
+          </label>
+          <br>
+
           <button type="submit">Calculate</button>
         </form>
         <br>
+
         <div class="desktop-ui ui">
           <p><b>Keyboard controls:</b></p>
           <p>WASD to move</p>
@@ -54,12 +83,17 @@
           <p>C to toggle the Julia set</p>
           <p>R & T to adjust 'a' value</p>
           <p>F & G to adjust 'bi' value</p>
+          <p>Y to toggle smoothing</p>
+          <p>U to toggle black and white mode</p>
+          <p>I to toggle Invert mode</p>
           <p>V to hide the UI</p>
         </div>
+
         <div class="mobile-ui ui">
           <p>Use single touch to move</p>
           <p>Use pinch to adjust scale</p>
         </div>
+
       </div>
     </main>
     <footer id="footer">

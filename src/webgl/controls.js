@@ -1,4 +1,4 @@
-import { calcDistance, mapValue } from '../utils.js';
+import { calcDistance } from '../utils.js';
 
 export class Controls {
   constructor(canvas, shader, program, ui) {
@@ -14,13 +14,10 @@ export class Controls {
     this.juliaOffset = .005 / Math.PI;
     this.mobileOffset = 2.5;
 
-    this.resizeCanvas();
     this.keyboardControls();
     this.mouseControls();
     this.touchControls();
-  }
 
-  resizeCanvas() {
     window.addEventListener('resize', () => {
       this.canvas.resize(window.innerWidth, window.innerHeight);
       this.program.buffer = this.program.initBuffer();
@@ -28,9 +25,7 @@ export class Controls {
   }
 
   mouseControls() {
-
-    // ZOOM
-    window.addEventListener('wheel', (e) => {
+    const calculateMouseZoom = (e) => {
       if (e.deltaY < 0) {
         this.program.scale *= 1 - this.zoomModifier;
       } else {
@@ -44,10 +39,11 @@ export class Controls {
       this.program.yOffset -= this.yOffset * this.zoomMoveModifier;
 
       this.ui.updateUI();
-    });
+    };
 
-    // MOVE
-    const calcMouseMove = (e) => {
+    window.addEventListener('wheel', calculateMouseZoom);
+
+    const calculateMouseMove = (e) => {
       if (this.click) {
         this.xOffset = (this.mouseX - e.clientX);
         this.mouseX = e.clientX;
@@ -70,20 +66,18 @@ export class Controls {
       this.mouseX = e.clientX;
       this.mouseY = e.clientY;
 
-      window.addEventListener('mousemove', calcMouseMove);
+      window.addEventListener('mousemove', calculateMouseMove);
     });
 
     this.canvas.canvas.addEventListener('mouseup', () => {
       this.click = false;
-      window.removeEventListener('mousemove', calcMouseMove);
+      window.removeEventListener('mousemove', calculateMouseMove);
     });
   }
 
   touchControls() {
     const move = (e) => {
       if (this.click && e.touches.length === 1) {
-        // document.getElementById('doubletouch').innerHTML = Math.floor(e.touches[0].clientX);
-
         const x = e.touches[0].clientX - this.canvas.xCenter;
         const y = e.touches[0].clientY - this.canvas.yCenter;
 
@@ -116,10 +110,6 @@ export class Controls {
 
         this.program.xOffset += this.xOffset;
         this.program.yOffset -= this.yOffset;
-
-        // document.getElementById('doubletouch').innerHTML = this.oldYOff - this.yOffset;
-        // document.getElementById('doubletouchx').innerHTML = this.program.xOffset;
-        // document.getElementById('doubletouchy').innerHTML = this.xOffset;
 
         this.d = calcDistance(x, y, x2, y2);
 
@@ -186,11 +176,11 @@ export class Controls {
       }
 
       if (e.code === 'KeyZ') {
-        this.shader.iterations += this.iterationModifier;
+        this.shader.iterations = parseInt(this.shader.iterations) + this.iterationModifier;
         this.shader.updateIterations();
         this.program.reloadShaders();
       } else if (e.code === 'KeyX') {
-        this.shader.iterations -= this.iterationModifier;
+        this.shader.iterations = parseInt(this.shader.iterations) - this.iterationModifier;
         this.shader.iterations = this.shader.iterations < 0 ? 0 : this.shader.iterations;
         this.shader.updateIterations();
         this.program.reloadShaders();
@@ -218,6 +208,18 @@ export class Controls {
         this.ui.footer.classList.toggle('hide');
       }
 
+      if (e.code === 'KeyY') {
+        this.program.smoothing = !this.program.smoothing;
+      }
+
+      if (e.code === 'KeyU') {
+        this.program.blackAndWhite = !this.program.blackAndWhite;
+      }
+
+      if (e.code === 'KeyI') {
+        this.program.invert = !this.program.invert;
+      }
+
       if (
         e.code === 'KeyD' ||
         e.code === 'KeyA' ||
@@ -231,7 +233,10 @@ export class Controls {
         e.code === 'KeyR' ||
         e.code === 'KeyT' ||
         e.code === 'KeyF' ||
-        e.code === 'KeyG'
+        e.code === 'KeyG' ||
+        e.code === 'KeyY' ||
+        e.code === 'KeyU' ||
+        e.code === 'KeyI'
       ) {
         this.ui.updateUI();
       }

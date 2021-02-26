@@ -56,7 +56,7 @@ export class Engine {
           frames = 0;
           this.missedFrameCount = frameTarget - this.fps;
 
-          console.log(`FPS: ${this.fps}  Missed frames: ${this.missedFrameCount}   Render time: ${this.renderPerf} ms`);
+          // console.log(`FPS: ${this.fps}  Missed frames: ${this.missedFrameCount}   Render time: ${this.renderPerf} ms`);
         }
       }
 
@@ -72,7 +72,7 @@ export class Engine {
       if (this.running === true) {
         window.requestAnimationFrame(animationLoop);
       }
-    }
+    };
 
     window.requestAnimationFrame(animationLoop);
   }

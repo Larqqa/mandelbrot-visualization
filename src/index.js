@@ -15,13 +15,13 @@ function main() {
   const program = new Program(canvas, shader);
   const engine = new Engine(canvas, program, shader);
   const ui = new UI(canvas, program, engine, shader);
-  engine.ui = ui;
   const controls = new Controls(canvas, shader, program, ui);
+
+  engine.ui = ui;
   ui.controls = controls;
   engine.controls = controls;
 
   engine.start();
-  // setTimeout(()=>engine.stop(), 100);
 }
 
 window.onload = main;

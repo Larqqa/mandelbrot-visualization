@@ -14,6 +14,14 @@ export class Program {
     this.bOffset = 0;
     this.isJulia = false;
 
+    this.h = -1.0;
+    this.s = -1.0;
+    this.v = -1.0;
+
+    this.smoothing = false;
+    this.blackAndWhite = false;
+    this.invert = false;
+
     this.buffer = this.initBuffer();
     this.programInfo = this.generateProgramInfo();
   }
@@ -28,14 +36,18 @@ export class Program {
       program: this.shaderProgram,
       attribLocations: {
         vertexPosition: this.gl.getAttribLocation(this.shaderProgram, 'aVertexPosition'),
-        vertexColor:    this.gl.getAttribLocation(this.shaderProgram, 'aVertexColor'),
       },
       uniformLocations: {
-        viewPort:  this.gl.getUniformLocation(this.shaderProgram, 'uViewPort'),
-        posOffset: this.gl.getUniformLocation(this.shaderProgram, 'uPosOff'),
-        scale:     this.gl.getUniformLocation(this.shaderProgram, 'uScale'),
-        isJulia:   this.gl.getUniformLocation(this.shaderProgram, 'uIsJulia'),
-        abOffset:  this.gl.getUniformLocation(this.shaderProgram, 'uABOff'),
+        viewPort:      this.gl.getUniformLocation(this.shaderProgram, 'uViewPort'),
+        posOffset:     this.gl.getUniformLocation(this.shaderProgram, 'uPosOff'),
+        scale:         this.gl.getUniformLocation(this.shaderProgram, 'uScale'),
+        xScale:        this.gl.getUniformLocation(this.shaderProgram, 'uXScale'),
+        isJulia:       this.gl.getUniformLocation(this.shaderProgram, 'uIsJulia'),
+        abOffset:      this.gl.getUniformLocation(this.shaderProgram, 'uABOff'),
+        hsv:           this.gl.getUniformLocation(this.shaderProgram, 'uHSV'),
+        smoothing:     this.gl.getUniformLocation(this.shaderProgram, 'uSmoothing'),
+        blackAndWhite: this.gl.getUniformLocation(this.shaderProgram, 'uBlackAndWhite'),
+        invert:        this.gl.getUniformLocation(this.shaderProgram, 'uInvert'),
       },
     };
   }
@@ -77,14 +89,23 @@ export class Program {
 
     this.gl.uniform2fv(
       this.programInfo.uniformLocations.posOffset,
-      [ this.xOffset, this.yOffset ]);
+      [ this.xOffset / this.scale, this.yOffset / this.scale ]);
 
     this.gl.uniform2fv(
       this.programInfo.uniformLocations.abOffset,
       [ this.aOffset, this.bOffset ]);
 
+    this.gl.uniform3fv(
+      this.programInfo.uniformLocations.hsv,
+      [ this.h, this.s, this.v ]
+    );
+
+    this.gl.uniform1f(this.programInfo.uniformLocations.xScale, this.scale * (this.canvas.width / this.canvas.height));
     this.gl.uniform1f(this.programInfo.uniformLocations.scale, this.scale);
     this.gl.uniform1f(this.programInfo.uniformLocations.isJulia, this.isJulia);
+    this.gl.uniform1f(this.programInfo.uniformLocations.smoothing, this.smoothing);
+    this.gl.uniform1f(this.programInfo.uniformLocations.blackAndWhite, this.blackAndWhite);
+    this.gl.uniform1f(this.programInfo.uniformLocations.invert, this.invert);
 
     this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
   }
